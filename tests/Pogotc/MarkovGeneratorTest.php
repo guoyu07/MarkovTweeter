@@ -66,7 +66,6 @@ class MarkovGeneratorTest extends \PHPUnit_Framework_TestCase {
 		$input = "this was something big and this was something important and this will be forgotten";
 
 		$markov->loadFromString($input);
-		$map = $markov->getMarkovMap();
 
 		//The behaviour of getNextWord relies on a random number generator
 		//to try and make this more deterministic we seed the generator
@@ -107,7 +106,6 @@ class MarkovGeneratorTest extends \PHPUnit_Framework_TestCase {
 		$input = "this is and this was and this would be something great";
 
 		$markov->loadFromString($input);
-		$map = $markov->getMarkovMap();		
 
 		//Setting the seed to 3 should result in "was" being returned
 		mt_srand(3);
@@ -123,5 +121,31 @@ class MarkovGeneratorTest extends \PHPUnit_Framework_TestCase {
 		mt_srand(5);
 		$nextWord = $markov->getNextWord("this");
 		$this->assertEquals("would", $nextWord);
+	}
+
+	public function testCanGenerateStreamOfWords()
+	{
+		$markov = new MarkovGenerator();
+
+		$input = "	Right and left of us they towered, with the afternoon sun falling full 
+					upon them and bringing out all the glorious colours of this beautiful range, 
+					deep blue and purple in the shadows of the peaks, green and brown where 
+					grass and rock mingled, and an endless perspective of jagged rock and 
+					pointed crags, till these were themselves lost in the distance, 
+					where the snowy peaks rose grandly. Here and there seemed mighty rifts 
+					in the mountains, through which, as the sun began to sink, we saw now 
+					and again the white gleam of falling water. One of my companions 
+					touched my arm as we swept round the base of a hill and opened up the 
+					lofty, snow-covered peak of a mountain, which seemed, as we wound on our 
+					serpentine way, to be right before us.";
+
+		mt_srand(5);
+
+		//Starting with "and" and the generated seeded to 5 
+		//generates a stream of characters 144 long.
+		//Chopping off the last word should leave it at 139
+		$markov->loadFromString($input);
+		$output = $markov->getStreamStartingWith("and", 140);
+		$this->assertEquals(139, strlen($output));
 	}
 }

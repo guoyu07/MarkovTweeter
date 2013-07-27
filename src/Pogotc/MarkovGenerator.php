@@ -40,7 +40,7 @@ class MarkovGenerator
 		$this->map = array();
 
 		//Strip out new lines
-		$input = str_replace(array("\n", "\r"), " ", $input);
+		$input = str_replace(array("\n", "\r", "\t"), " ", $input);
 
 		//Remove multiple spacing
 		$input = preg_replace("~( {2,})~", "", $input);
@@ -157,9 +157,27 @@ class MarkovGenerator
 		}
 	}
 
-
+	/**
+	 * Generates a stream of words starting with $input
+	 * @param  String $input     
+	 * @param  Int $maxLength max length the stream can be
+	 * @return String
+	 */
 	public function getStreamStartingWith($input, $maxLength)
 	{
-		
+		$output = $input;
+		$nextWord = $input;
+		do{
+			$nextWord = $this->getNextWord($nextWord);
+
+			//Only add the next word if it doesn't take us over the limit
+			if(strlen($output." ".$nextWord) < $maxLength){
+				$output.= " ".$nextWord;
+			}else{
+				$nextWord = null;
+			}
+		}while(strlen($output) < $maxLength && $nextWord);
+
+		return $output;
 	}
 }
