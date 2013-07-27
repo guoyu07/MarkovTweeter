@@ -32,6 +32,19 @@ class MarkovGeneratorTest extends \PHPUnit_Framework_TestCase {
 			
 	}
 
+	public function testMapIgnoresNewLinesAndSpaces()
+	{
+		$markov = new MarkovGenerator();
+		$input = "this is 
+					this was";
+
+		$markov->loadFromString($input);
+		$map = $markov->getMarkovMap();
+
+		//Map should have 3 entries because we have 3 unique words
+		$this->assertEquals(3, count($map));
+	}
+
 	public function testCountsRepeatOccurrencesOfWords()
 	{
 		$markov = new MarkovGenerator();

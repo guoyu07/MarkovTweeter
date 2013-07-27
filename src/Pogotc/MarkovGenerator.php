@@ -39,6 +39,12 @@ class MarkovGenerator
 	{
 		$this->map = array();
 
+		//Strip out new lines
+		$input = str_replace(array("\n", "\r"), " ", $input);
+
+		//Remove multiple spacing
+		$input = preg_replace("~( {2,})~", "", $input);
+
 		$inputWords = explode(" ", $input);
 		$numInputWords = count($inputWords);
 		for($i = 0; $i < $numInputWords; $i++)
@@ -131,7 +137,7 @@ class MarkovGenerator
 		if(!count($words)){
 			return null;
 		}
-		
+
 		$totalOccurrences = 0;
 
 		foreach($words as $word => $count)
