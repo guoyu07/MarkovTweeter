@@ -1,2 +1,4 @@
+config/config.yml
 vendor/
+resources/
 composer.phar

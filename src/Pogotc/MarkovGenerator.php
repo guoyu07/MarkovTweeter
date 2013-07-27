@@ -19,7 +19,12 @@ class MarkovGenerator
 	 */
 	public function loadFromFile($path)
 	{
-
+		if(!file_exists($path))
+		{
+			throw new Exception("Could not load source from ".$path);
+		}
+		$input = file_get_contents($path);
+		$this->loadFromString($input);
 	}
 
 	/**
@@ -178,6 +183,6 @@ class MarkovGenerator
 			}
 		}while(strlen($output) < $maxLength && $nextWord);
 
-		return $output;
+		return trim($output);
 	}
 }
