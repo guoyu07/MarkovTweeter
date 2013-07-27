@@ -18,12 +18,9 @@ if(!is_array($config))
 $consumerKey = $config['twitter']['consumerKey'];
 $consumerSecret = $config['twitter']['consumerSecret'];
 $accessToken = $config['twitter']['accessToken'];
-$accessTokenSecret = $config['twitter']['consumerTokenSecret'];
+$accessTokenSecret = $config['twitter']['accessTokenSecret'];
 
 $twitter = new Twitter($consumerKey, $consumerSecret, $accessToken, $accessTokenSecret);
-
-// $r = $twitter->send("Hello, World");
-// var_dump($r);
 
 $args = $_SERVER['argv'];
 
@@ -33,7 +30,11 @@ if(count($args) < 2){
 }
 
 $path = $args[1];
-$fullPath = __DIR__.'/../'.$path;
+if(strpos($path, "/") === 0){
+	$fullPath = $path;
+}else{
+	$fullPath = __DIR__.'/../'.$path;
+}
 
 if(!file_exists($fullPath)){
 	echo "Could not find file at ".$fullPath."\n";
@@ -46,9 +47,13 @@ $markov = new MarkovGenerator();
 $markov->loadFromFile($fullPath);
 
 echo "Generating Tweet\n";
-$tweet = $markov->getStreamStartingWith("I", 140);
+
+$starterWords = $config['markov']['starterWords'];
+$randomIdx = array_rand($starterWords);
+
+$tweet = $markov->getStreamStartingWith($starterWords[$randomIdx], 140);
 
 echo "Sending Tweet\n";
-$twitter->send($tweet);
+$r = $twitter->send($tweet);
 
 echo "Sent!\n";

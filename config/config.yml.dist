@@ -1,5 +1,8 @@
 twitter:
-    twitterConsumerKey:
-    twitterConsumerSecret:
-    twitterAccessToken:
-    twitterAccessTokenSecret:
+    twitterConsumerKey: key
+    twitterConsumerSecret: secret
+    twitterAccessToken: token
+    twitterAccessTokenSecret: tokenSecret
+
+markov:
+    starterWords: []
