@@ -46,4 +46,65 @@ class MarkovGeneratorTest extends \PHPUnit_Framework_TestCase {
 		//"will" follows "this" twice
 		$this->assertEquals(1, $map['this']['will']);
 	}
+
+	public function testPicksNextWordBasedOnWeightedRandomOccurences()
+	{
+		$markov = new MarkovGenerator();
+		$input = "this was something big and this was something important and this will be forgotten";
+
+		$markov->loadFromString($input);
+		$map = $markov->getMarkovMap();
+
+		//The behaviour of getNextWord relies on a random number generator
+		//to try and make this more deterministic we seed the generator
+		//
+		//this has 3 words following it so we'll be generating a number between 0 and 2
+		//the following seeds produce the following values (on my machine at least) 
+		//when called with mt_rand
+		//
+		// seed | result
+		// -----|--------
+		//   3 	|	1
+		//   4  |	0
+		//   5  |	2
+		
+		//Setting the seed to 3 or 4 should result in "was" being returned
+		mt_srand(3);
+		$nextWord = $markov->getNextWord("this");
+		$this->assertEquals("was", $nextWord);
+		
+		mt_srand(4);
+		$nextWord = $markov->getNextWord("this");
+		$this->assertEquals("was", $nextWord);
+		
+		//And setting it to 5 should result in "will" being returned
+		mt_srand(5);
+		$nextWord = $markov->getNextWord("this");
+		$this->assertEquals("will", $nextWord);
+		
+	}
+
+	public function testCanPickEveryWord()
+	{
+		$markov = new MarkovGenerator();
+		$input = "this is and this was and this would be something great";
+
+		$markov->loadFromString($input);
+		$map = $markov->getMarkovMap();		
+
+		//Setting the seed to 3 should result in "was" being returned
+		mt_srand(3);
+		$nextWord = $markov->getNextWord("this");
+		$this->assertEquals("was", $nextWord);
+		
+		//Setting the seed to 4 should result in "is" being returned
+		mt_srand(4);
+		$nextWord = $markov->getNextWord("this");
+		$this->assertEquals("is", $nextWord);
+		
+		//And setting it to 5 should result in "would" being returned
+		mt_srand(5);
+		$nextWord = $markov->getNextWord("this");
+		$this->assertEquals("would", $nextWord);
+	}
 }

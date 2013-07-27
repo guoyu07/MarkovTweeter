@@ -31,6 +31,10 @@ class MarkovGenerator
 		$this->buildMarkovMap($input);
 	}
 
+	/**
+	 * Builds the internal markov map from the given input
+	 * @param  String $input 
+	 */
 	protected function buildMarkovMap($input)
 	{
 		$this->map = array();
@@ -55,11 +59,20 @@ class MarkovGenerator
 		}
 	}
 
+	/**
+	 * Checks if a word has been added to the map yet
+	 * @param  String $word 
+	 * @return Boolean
+	 */
 	protected function wordIsInMap($word)
 	{
 		return isset($this->map[$word]);
 	}
 
+	/**
+	 * Adds a word to the markov map
+	 * @param String $word 
+	 */
 	protected function addWordToMap($word)
 	{
 		if(!$this->wordIsInMap($word))
@@ -68,6 +81,22 @@ class MarkovGenerator
 		}
 	}
 
+	protected function getWordListForWord($word)
+	{
+		if($this->wordIsInMap($word))
+		{
+			return $this->map[$word];
+		}else{
+			return null;
+		}
+	}
+
+	/**
+	 * Tracks the occurrence of a word ($secondWord) following a 
+	 * previous word ($firstWord) in the input
+	 * @param  String $firstWord  
+	 * @param  String $secondWord 
+	 */
 	protected function trackWordFollowsInputWord($firstWord, $secondWord)
 	{
 		if($this->wordIsInMap($firstWord))
@@ -81,6 +110,10 @@ class MarkovGenerator
 		}
 	}
 
+	/**
+	 * Returns the Markov Map 
+	 * @return Array 
+	 */
 	public function getMarkovMap()
 	{
 		return $this->map;
@@ -88,8 +121,26 @@ class MarkovGenerator
 
 	public function getNextWord($input)
 	{
+		$words = $this->getWordListForWord($input);
+		$totalOccurrences = 0;
 
+		foreach($words as $word => $count)
+		{
+			$totalOccurrences+= $count;	
+		}
+		
+		$val = mt_rand(0, $totalOccurrences - 1);
+		$runningCount = 0;
+		foreach($words as $word => $count)
+		{
+			$runningCount+= $count;
+			if($runningCount > $val)
+			{
+				return $word;
+			}
+		}
 	}
+
 
 	public function getStreamStartingWith($input, $maxLength)
 	{
