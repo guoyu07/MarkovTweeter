@@ -82,6 +82,10 @@ class MarkovGeneratorTest extends \PHPUnit_Framework_TestCase {
 		$nextWord = $markov->getNextWord("this");
 		$this->assertEquals("will", $nextWord);
 		
+		//Forgotten doesn't have any words following it 
+		//so the next word should be empty
+		$nextWord = $markov->getNextWord("forgotten");
+		$this->assertEquals(null, $nextWord);
 	}
 
 	public function testCanPickEveryWord()

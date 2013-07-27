@@ -119,9 +119,19 @@ class MarkovGenerator
 		return $this->map;
 	}
 
+	/**
+	 * Generates a next word randomly based on the words that
+	 * followed $input in the map
+	 * @param  [type] $input [description]
+	 * @return [type]        [description]
+	 */
 	public function getNextWord($input)
 	{
 		$words = $this->getWordListForWord($input);
+		if(!count($words)){
+			return null;
+		}
+		
 		$totalOccurrences = 0;
 
 		foreach($words as $word => $count)
