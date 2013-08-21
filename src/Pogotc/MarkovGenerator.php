@@ -162,6 +162,20 @@ class MarkovGenerator
 		}
 	}
 
+	public function getStartingWithRandomCapitalisedWord($maxLength)
+	{
+		//Grab a list of all the words that start with a capital letter
+		$capitalWords = array();
+		foreach($this->map as $word => $count){
+			if(preg_match('~^[A-Z]~', $word) && $this->getNextWord($word)){
+				$capitalWords[]= $word;
+			}
+		}
+
+		$starterWord = $capitalWords[array_rand($capitalWords)];
+		return $this->getStreamStartingWith($starterWord, $maxLength);
+	}
+
 	/**
 	 * Generates a stream of words starting with $input
 	 * @param  String $input     

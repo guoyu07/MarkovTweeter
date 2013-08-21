@@ -41,6 +41,11 @@ if(!file_exists($fullPath)){
 	exit();
 }
 
+$sendTweet = true;
+if(isset($args[2]) && $args[2] == '--no-send'){
+	$sendTweet = false;
+}
+
 echo "Found input\n";
 echo "Building Markov Map\n";
 $markov = new MarkovGenerator();
@@ -51,9 +56,18 @@ echo "Generating Tweet\n";
 $starterWords = $config['markov']['starterWords'];
 $randomIdx = array_rand($starterWords);
 
-$tweet = $markov->getStreamStartingWith($starterWords[$randomIdx], 140);
+if(count($starterWords)){
+	$tweet = $markov->getStreamStartingWith($starterWords[$randomIdx], 140);
+}else{
+	$tweet = $markov->getStartingWithRandomCapitalisedWord(140);
+}
 
-echo "Sending Tweet\n";
-$r = $twitter->send($tweet);
+if($sendTweet){
+	echo "Sending Tweet\n";
+	$r = $twitter->send($tweet);
 
-echo "Sent!\n";
+	echo "Sent!\n";
+}else{
+	echo $tweet."\n\n";
+	echo "Not sending\n";
+}
